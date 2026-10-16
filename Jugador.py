@@ -16,8 +16,8 @@ class Jugador:
             "d": (0, 1)  # Derecha: suma 1 a la columna.
         }
 
-        direccion = direccion.lower.strip()
-        if direccion not  in movimientos or not self.esta_vivo:
+        direccion = direccion.lower().strip()
+        if direccion not  in movimientos or not self.esta_vivo():
             return False
 
         #obtiene los valores asociados a la tecla
