@@ -57,3 +57,35 @@ class Mapa:
                         if not self.dentro_de_limites(fila, columna):
                             return False
                         return not self.hay_pared(fila, columna)
+
+                    def agregar_elemento(self, elemento):
+                        self.elementos.append(elemento)
+
+                    def quitar_elemento(self, elemento):
+                        # se usa cuando el jugador recoge algo
+                        if elemento in self.elementos:
+                            self.elementos.remove(elemento)
+
+                    def obtener_elemento(self, fila, columna):
+                        # devuelve el elemento de esa casilla, o None si no hay nada
+                        for e in self.elementos:
+                            if e.fila == fila and e.columna == columna:
+                                return e
+                        return None
+
+                    def contar_tipo(self, tipo):
+                        # cuantos quedan de ese tipo, por ejemplo "tesoro"
+                        total = 0
+                        for e in self.elementos:
+                            if e.tipo == tipo:
+                                total += 1
+                        return total
+
+                    def celdas_libres(self):
+                        # casillas sin pared ni elementos, sirve para ubicar y mover monstruos
+                        libres = []
+                        for f in range(self.filas):
+                            for c in range(self.columnas):
+                                if self.es_valida(f, c) and self.obtener_elemento(f, c) is None:
+                                    libres.append((f, c))
+                        return libres
