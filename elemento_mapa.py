@@ -1,22 +1,3 @@
-"""Parte de Federick Umaña Gutiérrez - Laboratorio 01.
-
-Integración en la clase Juego del equipo:
-    from elemento_mapa import procesar_celda, reubicar_monstruos
-
-    def procesar_celda(self):
-        return procesar_celda(self)
-
-    def reubicar_monstruos(self):
-        return reubicar_monstruos(self)
-
-Después de mover al jugador a una celda válida, llamar a procesar_celda().
-Si juego.activo sigue siendo True, llamar a reubicar_monstruos().
-Un movimiento contra una pared no debe ejecutar estas funciones.
-El bucle de Juego controla la victoria cuando ya no quedan tesoros.
-
-Se usan los atributos y Mapa.es_valida(fila, columna) del documento.
-El jugador debe inicializarse con salud=100 al crear la partida.
-"""
 
 import random
 
