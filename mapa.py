@@ -89,3 +89,33 @@ class Mapa:
                                 if self.es_valida(f, c) and self.obtener_elemento(f, c) is None:
                                     libres.append((f, c))
                         return libres
+
+                    def pos_pantalla(self, fila, columna):
+                        # pasa la posicion del mapa a la de la pantalla
+                        return self.fila_base + fila, self.col_base + columna
+
+                    def dibujar_paredes(self):
+                        for f, c in self.paredes:
+                            r, col = self.pos_pantalla(f, c)
+                            print_at(r, col, Fore.LIGHTBLACK_EX + self.PARED + Style.RESET_ALL)
+
+                    def dibujar_elementos(self):
+                        for e in self.elementos:
+                            self.dibujar_celda(e.fila, e.columna)
+
+                    def dibujar_celda(self, fila, columna):
+                        # vuelve a dibujar una casilla, si no hay nada la deja vacia
+                        r, col = self.pos_pantalla(fila, columna)
+                        if self.hay_pared(fila, columna):
+                            texto = Fore.LIGHTBLACK_EX + self.PARED + Style.RESET_ALL
+                        else:
+                            e = self.obtener_elemento(fila, columna)
+                            if e is None:
+                                texto = " "
+                            else:
+                                texto = self.COLORES[e.tipo] + self.SIMBOLOS[e.tipo] + Style.RESET_ALL
+                        print_at(r, col, texto)
+
+                    def dibujar(self):
+                        self.dibujar_paredes()
+                        self.dibujar_elementos()
