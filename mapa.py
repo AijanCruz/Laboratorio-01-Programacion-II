@@ -1,3 +1,4 @@
+
 from colorama import Fore, Style
 from posicion import print_at
 
@@ -19,13 +20,20 @@ DISENO = [
 
 
 class Mapa:
-    SIMBOLOS = {"tesoro": "$", "pocion": "+", "trampa": "X", "monstruo": "M"}
+    SIMBOLOS = {
+        "tesoro": "$",
+        "pocion": "+",
+        "trampa": "X",
+        "monstruo": "M"
+    }
+
     COLORES = {
         "tesoro": Fore.YELLOW,
         "pocion": Fore.GREEN,
         "trampa": Fore.MAGENTA,
         "monstruo": Fore.RED,
     }
+
     PARED = "░"
 
     def __init__(self, diseno, fila_base=3, col_base=7):
@@ -39,83 +47,119 @@ class Mapa:
         self.cargar_paredes(diseno)
 
     def cargar_paredes(self, diseno):
-        # guarda la posicion de cada # del diseno
+        # Guarda la posicion de cada # del diseno
         self.paredes = []
+
         for f in range(len(diseno)):
             for c in range(len(diseno[f])):
                 if diseno[f][c] == "#":
                     self.paredes.append((f, c))
 
-                    def dentro_de_limites(self, fila, columna):
-                        return 0 <= fila < self.filas and 0 <= columna < self.columnas
+    def dentro_de_limites(self, fila, columna):
+        return (
+            0 <= fila < self.filas
+            and 0 <= columna < self.columnas
+        )
 
-                    def hay_pared(self, fila, columna):
-                        return (fila, columna) in self.paredes
+    def hay_pared(self, fila, columna):
+        return (fila, columna) in self.paredes
 
-                    def es_valida(self, fila, columna):
-                        # se puede pasar si esta dentro del mapa y no es pared
-                        if not self.dentro_de_limites(fila, columna):
-                            return False
-                        return not self.hay_pared(fila, columna)
+    def es_valida(self, fila, columna):
+        # Se puede pasar si esta dentro del mapa y no es pared
+        if not self.dentro_de_limites(fila, columna):
+            return False
 
-                    def agregar_elemento(self, elemento):
-                        self.elementos.append(elemento)
+        return not self.hay_pared(fila, columna)
 
-                    def quitar_elemento(self, elemento):
-                        # se usa cuando el jugador recoge algo
-                        if elemento in self.elementos:
-                            self.elementos.remove(elemento)
+    def agregar_elemento(self, elemento):
+        self.elementos.append(elemento)
 
-                    def obtener_elemento(self, fila, columna):
-                        # devuelve el elemento de esa casilla, o None si no hay nada
-                        for e in self.elementos:
-                            if e.fila == fila and e.columna == columna:
-                                return e
-                        return None
+    def quitar_elemento(self, elemento):
+        # Se usa cuando el jugador recoge algo
+        if elemento in self.elementos:
+            self.elementos.remove(elemento)
 
-                    def contar_tipo(self, tipo):
-                        # cuantos quedan de ese tipo, por ejemplo "tesoro"
-                        total = 0
-                        for e in self.elementos:
-                            if e.tipo == tipo:
-                                total += 1
-                        return total
+    def obtener_elemento(self, fila, columna):
+        # Devuelve el elemento de esa casilla, o None si no hay nada
+        for e in self.elementos:
+            if e.fila == fila and e.columna == columna:
+                return e
 
-                    def celdas_libres(self):
-                        # casillas sin pared ni elementos, sirve para ubicar y mover monstruos
-                        libres = []
-                        for f in range(self.filas):
-                            for c in range(self.columnas):
-                                if self.es_valida(f, c) and self.obtener_elemento(f, c) is None:
-                                    libres.append((f, c))
-                        return libres
+        return None
 
-                    def pos_pantalla(self, fila, columna):
-                        # pasa la posicion del mapa a la de la pantalla
-                        return self.fila_base + fila, self.col_base + columna
+    def contar_tipo(self, tipo):
+        # Cuantos quedan de ese tipo, por ejemplo "tesoro"
+        total = 0
 
-                    def dibujar_paredes(self):
-                        for f, c in self.paredes:
-                            r, col = self.pos_pantalla(f, c)
-                            print_at(r, col, Fore.LIGHTBLACK_EX + self.PARED + Style.RESET_ALL)
+        for e in self.elementos:
+            if e.tipo == tipo:
+                total += 1
 
-                    def dibujar_elementos(self):
-                        for e in self.elementos:
-                            self.dibujar_celda(e.fila, e.columna)
+        return total
 
-                    def dibujar_celda(self, fila, columna):
-                        # vuelve a dibujar una casilla, si no hay nada la deja vacia
-                        r, col = self.pos_pantalla(fila, columna)
-                        if self.hay_pared(fila, columna):
-                            texto = Fore.LIGHTBLACK_EX + self.PARED + Style.RESET_ALL
-                        else:
-                            e = self.obtener_elemento(fila, columna)
-                            if e is None:
-                                texto = " "
-                            else:
-                                texto = self.COLORES[e.tipo] + self.SIMBOLOS[e.tipo] + Style.RESET_ALL
-                        print_at(r, col, texto)
+    def celdas_libres(self):
+        # Casillas sin pared ni elementos
+        # Sirve para ubicar y mover monstruos
+        libres = []
 
-                    def dibujar(self):
-                        self.dibujar_paredes()
-                        self.dibujar_elementos()
+        for f in range(self.filas):
+            for c in range(self.columnas):
+                if (
+                    self.es_valida(f, c)
+                    and self.obtener_elemento(f, c) is None
+                ):
+                    libres.append((f, c))
+
+        return libres
+
+    def pos_pantalla(self, fila, columna):
+        # Pasa la posicion del mapa a la de la pantalla
+        return (
+            self.fila_base + fila,
+            self.col_base + columna
+        )
+
+    def dibujar_paredes(self):
+        for f, c in self.paredes:
+            r, col = self.pos_pantalla(f, c)
+
+            print_at(
+                r,
+                col,
+                Fore.LIGHTBLACK_EX
+                + self.PARED
+                + Style.RESET_ALL
+            )
+
+    def dibujar_elementos(self):
+        for e in self.elementos:
+            self.dibujar_celda(e.fila, e.columna)
+
+    def dibujar_celda(self, fila, columna):
+        # Vuelve a dibujar una casilla
+        # Si no hay nada la deja vacia
+        r, col = self.pos_pantalla(fila, columna)
+
+        if self.hay_pared(fila, columna):
+            texto = (
+                Fore.LIGHTBLACK_EX
+                + self.PARED
+                + Style.RESET_ALL
+            )
+        else:
+            e = self.obtener_elemento(fila, columna)
+
+            if e is None:
+                texto = " "
+            else:
+                texto = (
+                    self.COLORES[e.tipo]
+                    + self.SIMBOLOS[e.tipo]
+                    + Style.RESET_ALL
+                )
+
+        print_at(r, col, texto)
+
+    def dibujar(self):
+        self.dibujar_paredes()
+        self.dibujar_elementos()
