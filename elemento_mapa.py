@@ -33,7 +33,10 @@ class ElementoMapa:
         self.tipo = tipo
         self.fila = fila
         self.columna = columna
-        self.valor = self.VALORES[tipo] if valor is None else valor
+        if valor is None:
+            self.valor = self.VALORES[tipo]
+        else:
+            self.valor = valor
         if self.valor < 0:
             raise ValueError("El valor del elemento no puede ser negativo.")
 
@@ -74,14 +77,19 @@ def procesar_celda(juego):
 def reubicar_monstruos(juego):
     """Reubica todos los monstruos sin paredes ni elementos superpuestos.
 
-    Los destinos se sortean juntos, sin repetición. Pueden coincidir con
+    Los destinos se eligen de una lista, sin repetición. Pueden coincidir con
     la posición del jugador o con posiciones que otros monstruos abandonan.
     """
     if not juego.activo:
         return None
     mapa = juego.mapa
-    monstruos = [e for e in mapa.elementos if e.tipo == "monstruo"]
-    ocupadas = {(e.fila, e.columna) for e in mapa.elementos if e.tipo != "monstruo"}
+    monstruos = []
+    ocupadas = []
+    for elemento in mapa.elementos:
+        if elemento.tipo == "monstruo":
+            monstruos.append(elemento)
+        else:
+            ocupadas.append((elemento.fila, elemento.columna))
     disponibles = []
     for fila in range(mapa.filas):
         for columna in range(mapa.columnas):
@@ -91,10 +99,15 @@ def reubicar_monstruos(juego):
     if len(disponibles) < len(monstruos):
         raise ValueError("No hay suficientes celdas libres para los monstruos.")
 
-    destinos = random.sample(disponibles, len(monstruos))
-    for monstruo, (fila, columna) in zip(monstruos, destinos):
-        monstruo.fila = fila
-        monstruo.columna = columna
+    destinos = []
+    for monstruo in monstruos:
+        # Elegir una posición y retirarla evita que se repita el destino.
+        indice = random.randint(0, len(disponibles) - 1)
+        posicion = disponibles[indice]
+        disponibles.remove(posicion)
+        destinos.append(posicion)
+        monstruo.fila = posicion[0]
+        monstruo.columna = posicion[1]
 
     posicion_jugador = (juego.jugador.fila, juego.jugador.columna)
     if posicion_jugador in destinos:

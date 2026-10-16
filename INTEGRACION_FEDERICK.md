@@ -54,21 +54,36 @@ if self.jugador.mover(direccion, self.mapa):
         if mensaje:
             print(mensaje)
 
-    if self.activo and not any(e.tipo == "tesoro" for e in self.mapa.elementos):
+    quedan_tesoros = False
+    for elemento in self.mapa.elementos:
+        if elemento.tipo == "tesoro":
+            quedan_tesoros = True
+
+    if self.activo and not quedan_tesoros:
         self.activo = False
         print("¡Ganaste! Recuperaste todos los tesoros.")
 ```
 
 Los monstruos se reubican solo tras movimientos válidos. No ocupan paredes,
 objetos ni la misma celda entre sí; pueden aparecer sobre el jugador y causar
-derrota. Se sortean todos los destinos antes de moverlos, evitando ciclos de
-búsqueda sin fin. Si no caben todos, se informa con `ValueError` sin moverlos.
+derrota. Se construye una lista de celdas disponibles. Para cada monstruo se
+elige un índice con `random.randint` y se retira de la lista la celda usada.
+Así no se repiten destinos ni se buscan posiciones indefinidamente.
+Si no caben todos, se informa con `ValueError` antes de moverlos.
+
+Se utilizan listas, diccionarios, tuplas, clases, funciones, condicionales y
+ciclos explícitos. No se utilizan conjuntos, comprensiones, `zip`, `any`,
+`random.sample`, `unittest`, `unittest.mock` ni `SimpleNamespace`.
+La única biblioteca importada por el módulo es `random`, para la reubicación
+aleatoria del juego. Debe confirmarse con el profesor que esa función concreta
+se ha visto en clases; las instrucciones compartidas no enumeran las funciones
+de aleatoriedad permitidas.
 
 ## Estado de integración
 
-Al preparar esta entrega, `main` contiene `Jugador.py` y `posicion.py`, pero
-todavía no contiene `Mapa` ni `Juego`. En la versión consultada de `mapa.py` de
-la rama Jefferson, los métodos desde `dentro_de_limites` están anidados dentro
+Al revisar esta adaptación, `main` contiene `Jugador.py`, `posicion.py`,
+`mapa.py` y `elemento_mapa.py`, pero todavía no contiene `Juego`.
+En la versión consultada de `mapa.py`, los métodos desde `dentro_de_limites` están anidados dentro
 de `cargar_paredes`; deben quedar al nivel de los otros métodos de la clase para
 que `Mapa.es_valida` y los demás estén disponibles. Ese archivo no se modifica
 en esta entrega.
@@ -76,10 +91,11 @@ en esta entrega.
 ## Comprobación
 
 ```bash
-python -m unittest discover -s tests -v
+python pruebas_elementos.py
 ```
 
-Las pruebas usan la clase Jugador real y un mapa pequeño de prueba. Verifican
-efectos, consumo, derrota, exclusión de paredes y objetos, destinos únicos y
-falta de espacio. La interfaz de consola completa queda pendiente de integrar
-Mapa y Juego.
+Las 10 comprobaciones usan la clase Jugador real y un mapa pequeño de prueba,
+con clases, funciones, ciclos y condicionales, sin bibliotecas de pruebas.
+Verifican efectos, consumo, derrota, exclusión de paredes y objetos y destinos
+únicos, incluidos 100 sorteos. La interfaz de consola completa queda pendiente
+de corregir Mapa e integrar Juego.
