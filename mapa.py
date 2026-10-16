@@ -45,3 +45,15 @@ class Mapa:
             for c in range(len(diseno[f])):
                 if diseno[f][c] == "#":
                     self.paredes.append((f, c))
+
+                    def dentro_de_limites(self, fila, columna):
+                        return 0 <= fila < self.filas and 0 <= columna < self.columnas
+
+                    def hay_pared(self, fila, columna):
+                        return (fila, columna) in self.paredes
+
+                    def es_valida(self, fila, columna):
+                        # se puede pasar si esta dentro del mapa y no es pared
+                        if not self.dentro_de_limites(fila, columna):
+                            return False
+                        return not self.hay_pared(fila, columna)
