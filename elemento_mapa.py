@@ -27,8 +27,7 @@ class ElementoMapa:
             jugador.recoger_tesoro(self.valor)
             return f"Recogiste un tesoro: +{self.valor} puntos."
         if self.tipo == "pocion":
-            jugador.curarse(self.valor)
-            return f"Recuperaste {self.valor} de salud."
+            return jugador.curarse(self.valor)
         if self.tipo == "trampa":
             jugador.recibir_dano(self.valor)
             return f"Activaste una trampa: -{self.valor} de salud."

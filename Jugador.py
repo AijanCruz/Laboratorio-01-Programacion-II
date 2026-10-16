@@ -55,11 +55,15 @@ class Jugador:
         # Accede a la clave "tesoros" del diccionario y aumenta su cantidad en 1.
         self.inventario["tesoros"] += 1
 
-
-    def curarse(self,cantidad=20):
+    def curarse(self, cantidad=20):
         if cantidad < 0:
             raise ValueError("La curación no puede ser negativa")
-        self.salud += cantidad
+
+        if self.salud >= 100:
+            return "Tu salud ya está al máximo (100/100). No puedes curarte."
+
+        self.salud = min(100, self.salud + cantidad)
+        return f"Tu salud actual es {self.salud}/100."
 
 
     def recibir_dano(self,cantidad=20):
